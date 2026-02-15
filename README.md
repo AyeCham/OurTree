@@ -230,7 +230,7 @@ Zero-touch update mechanism.
 
 ---
 
-# ⚡ Performance Notes
+# Performance Notes
 
 - Built using ARM64 multi-stage Docker build
 - Final image size under 25MB
@@ -252,7 +252,7 @@ OurTree aims to:
 
 #  Author
 
-Aye Chan Aung  
+Aye Chan Aung, Sai Zat, Yolo 
 Technology & Data Science  
 Mae Fah Luang University  
 
