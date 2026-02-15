@@ -1,11 +1,11 @@
-# 🌳 OurTree Offline Library
+# OurTree Offline Library
 
 > A standalone, local-first digital library system built on Raspberry Pi 5.  
 > Broadcasts its own Wi-Fi hotspot and serves a React-based web application — fully offline.
 
 ---
 
-## 📌 Overview
+## Overview
 
 **OurTree Offline Library** transforms a Raspberry Pi 5 into a self-contained edge computing library server.
 
@@ -25,7 +25,7 @@ Designed for:
 
 ---
 
-# 🏗️ System Architecture
+# System Architecture
 
 Client Device  
 ↓  
@@ -39,9 +39,9 @@ Nginx (Serves React App)
 
 ---
 
-# 💻 Operating System & Base Setup
+# Operating System & Base Setup
 
-## 🖥️ Base Operating System
+## Base Operating System
 
 OurTree runs on:
 
@@ -50,7 +50,7 @@ OurTree runs on:
 
 ---
 
-## 📥 OS Installation (Using Raspberry Pi Imager)
+## OS Installation (Using Raspberry Pi Imager)
 
 The system is installed using:
 
@@ -69,7 +69,7 @@ The system is installed using:
 
 ---
 
-## 📡 Default RaspAP Configuration
+## Default RaspAP Configuration
 
 After boot:
 
