@@ -110,10 +110,9 @@ newgrp docker
 ## Build ARM64 Image
 
 ```bash
+docker login
 docker buildx create --name pi-builder --use --bootstrap
-docker buildx build --platform linux/arm64 \
-  -t <your-dockerhub-username>/ourtree-library:latest \
-  --push .
+docker buildx build --platform linux/arm64 -t dockerusername/ourtree-library:latest --push .
 ```
 
 ---
@@ -126,9 +125,10 @@ nano docker-compose.yml
 ```
 
 ```yaml
+cat <<EOF > docker-compose.yml
 services:
   library:
-    image: <your-dockerhub-username>/ourtree-library:latest
+    image: dockerusername/ourtree-library:latest
     ports:
       - "8080:80"
     restart: always
@@ -139,6 +139,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     command: --interval 3600 --cleanup
     restart: always
+EOF
 ```
 
 Start services:
