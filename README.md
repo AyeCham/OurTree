@@ -252,9 +252,7 @@ OurTree aims to:
 
 #  Author
 
-Aye Chan Aung, Sai Zat, Yolo 
-Technology & Data Science  
-Mae Fah Luang University  
+Aye Chan Aung, Sai Zat, Yolo
 
 ---
 
