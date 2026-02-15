@@ -1,0 +1,5 @@
+{
+  "name": "Our Trees Offline Library",
+  "description": "A digital library management system featuring book browsing, PDF reading capabilities, categorization by DDC, and a request system.",
+  "requestFramePermissions": []
+}
