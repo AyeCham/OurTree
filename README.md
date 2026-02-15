@@ -95,9 +95,9 @@ Update the following:
 
 ---
 
-# 🐳 Docker Deployment
+# Docker Deployment
 
-## 1️⃣ Install Docker
+## Install Docker
 
 ```bash
 curl -sSL https://get.docker.com | sh
@@ -107,7 +107,7 @@ newgrp docker
 
 ---
 
-## 2️⃣ Build ARM64 Image
+## Build ARM64 Image
 
 ```bash
 docker buildx create --name pi-builder --use --bootstrap
@@ -118,7 +118,7 @@ docker buildx build --platform linux/arm64 \
 
 ---
 
-## 3️⃣ Docker Compose Setup
+## Docker Compose Setup
 
 ```bash
 mkdir ~/ourtree-library && cd ~/ourtree-library
@@ -149,7 +149,7 @@ docker compose up -d
 
 ---
 
-# 🔀 Gateway Redirect (Lighttpd)
+# Gateway Redirect (Lighttpd)
 
 Edit configuration:
 
@@ -175,7 +175,7 @@ Now users connecting to Wi-Fi will automatically see the library interface.
 
 ---
 
-# 📦 Dockerfile
+# Dockerfile
 
 ```dockerfile
 FROM node:20-alpine AS build-stage
@@ -194,7 +194,7 @@ CMD ["nginx", "-g", "daemon off;"]
 
 ---
 
-# 🔄 Automatic Updates
+# Automatic Updates
 
 Uses:
 
@@ -211,7 +211,7 @@ Zero-touch update mechanism.
 
 ---
 
-# 🛠️ Tech Stack
+# Tech Stack
 
 ## Frontend
 - React
@@ -239,7 +239,7 @@ Zero-touch update mechanism.
 
 ---
 
-# 🎯 Vision
+# Vision
 
 OurTree aims to:
 
@@ -250,7 +250,7 @@ OurTree aims to:
 
 ---
 
-# 👨‍💻 Author
+#  Author
 
 Aye Chan Aung  
 Technology & Data Science  
@@ -258,6 +258,6 @@ Mae Fah Luang University
 
 ---
 
-# 📜 License
+# License
 
 MIT License
