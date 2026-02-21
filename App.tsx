@@ -36,76 +36,60 @@ const App: React.FC = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [viewingBook, setViewingBook] = useState<Book | null>(null);
   const [editingBook, setEditingBook] = useState<Book | null>(null);
-  
-  // Sorting State
+
   const [sortBy, setSortBy] = useState<"title" | "author" | "ddc">("title");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-  
-  // Modals
+
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [isAddBookModalOpen, setIsAddBookModalOpen] = useState(false);
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
-  
-  // Notification
   const [showNotification, setShowNotification] = useState<string | null>(null);
 
-  // Load Data & Sync Logic
+  // MODIFIED LOAD LOGIC: Fetch from Volume first
   useEffect(() => {
     const splashTimer = setTimeout(() => setShowSplash(false), 2800);
 
-    const initializeData = () => {
+    const initializeData = async () => {
       try {
-        const savedBooksStr = localStorage.getItem(STORAGE_KEY);
         const savedRequestsStr = localStorage.getItem(REQUEST_STORAGE_KEY);
-        const savedVersion = localStorage.getItem(VERSION_KEY);
-
         let loadedBooks: Book[] = [];
 
-        if (savedBooksStr) {
-          loadedBooks = JSON.parse(savedBooksStr);
-        } else {
-          loadedBooks = [...SAMPLE_BOOKS];
+        // 1. Try to fetch from Docker Volume / M.2
+        try {
+          const response = await fetch('/books/library_data.json');
+          if (response.ok) {
+            loadedBooks = await response.json();
+            console.log("Books loaded from sync volume.");
+          } else {
+            throw new Error("No volume data");
+          }
+        } catch (e) {
+          // 2. Fallback to LocalStorage or Sample Books
+          const savedBooksStr = localStorage.getItem(STORAGE_KEY);
+          loadedBooks = savedBooksStr ? JSON.parse(savedBooksStr) : [...SAMPLE_BOOKS];
+          console.warn("Using fallback data.");
         }
 
-        // Data Sync/Conflict Resolution Logic:
-        // If the application code version is newer than the stored data version,
-        // we check for new books in SAMPLE_BOOKS that aren't in localStorage and merge them.
+        const savedVersion = localStorage.getItem(VERSION_KEY);
         if (savedVersion !== DATA_VERSION) {
-           console.log("System updated. Syncing local database...");
-           const existingIds = new Set(loadedBooks.map(b => b.id));
-           let addedCount = 0;
-
-           SAMPLE_BOOKS.forEach(sampleBook => {
-             if (!existingIds.has(sampleBook.id)) {
-               loadedBooks.push(sampleBook);
-               addedCount++;
-             }
-           });
-
-           // Update version in storage
-           localStorage.setItem(VERSION_KEY, DATA_VERSION);
-           
-           if (addedCount > 0) {
-             notify(`Database Sync: ${addedCount} new books added.`);
-           }
+          const existingIds = new Set(loadedBooks.map(b => b.id));
+          SAMPLE_BOOKS.forEach(sampleBook => {
+            if (!existingIds.has(sampleBook.id)) loadedBooks.push(sampleBook);
+          });
+          localStorage.setItem(VERSION_KEY, DATA_VERSION);
         }
 
         setBooks(loadedBooks);
-
-        if (savedRequestsStr) {
-          setRequests(JSON.parse(savedRequestsStr));
-        }
-        
+        if (savedRequestsStr) setRequests(JSON.parse(savedRequestsStr));
         setIsLoaded(true);
       } catch (error) {
-        console.error("Failed to load data:", error);
+        console.error("Load failed:", error);
         setBooks(SAMPLE_BOOKS);
         setIsLoaded(true);
       }
     };
 
     initializeData();
-
     return () => clearTimeout(splashTimer);
   }, []);
 
@@ -123,8 +107,8 @@ const App: React.FC = () => {
   };
 
   const filteredBooks = books.filter(book => {
-    const matchesSearch = book.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          book.author.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      book.author.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesDDC = selectedDDC === "All" || book.ddc === selectedDDC;
     return matchesSearch && matchesDDC;
   }).sort((a, b) => {
@@ -183,12 +167,12 @@ const App: React.FC = () => {
   const handleUpdateBook = (updatedData: NewBookForm) => {
     if (!editingBook) return;
 
-    setBooks(prev => prev.map(book => 
-      book.id === editingBook.id 
-        ? { ...book, ...updatedData } 
+    setBooks(prev => prev.map(book =>
+      book.id === editingBook.id
+        ? { ...book, ...updatedData }
         : book
     ));
-    
+
     setIsAddBookModalOpen(false);
     setEditingBook(null);
     notify("စာအုပ်အချက်အလက်ကို ပြင်ဆင်ပြီးပါပြီ");
@@ -198,7 +182,7 @@ const App: React.FC = () => {
     setBooks(prev => prev.filter(b => b.id !== id));
     notify("စာအုပ်ကို ဖျက်ပြီးပါပြီ");
   };
-  
+
   const handleDeleteRequest = (id: number) => {
     setRequests(prev => prev.filter(r => r.id !== id));
     notify("တောင်းဆိုချက်ကို ဖယ်ရှားပြီးပါပြီ");
@@ -240,7 +224,7 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen pb-24" style={{ backgroundColor: COLORS.bgLight }}>
-      <Header 
+      <Header
         isAdmin={isAdmin}
         onLogout={handleLogout}
         onOpenLogin={() => setShowLoginModal(true)}
@@ -254,7 +238,7 @@ const App: React.FC = () => {
           <BookDetail book={viewingBook} onBack={() => setViewingBook(null)} />
         ) : activeTab === 'admin_dashboard' && isAdmin ? (
           /* Admin Dashboard View */
-          <AdminDashboard 
+          <AdminDashboard
             books={books}
             requests={requests}
             onAddBook={() => { setEditingBook(null); setIsAddBookModalOpen(true); }}
@@ -268,7 +252,7 @@ const App: React.FC = () => {
           <>
             <div className="relative mb-10 max-w-2xl mx-auto">
               <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
-              <input 
+              <input
                 type="text"
                 placeholder="စာအုပ်အမည်၊ စာရေးဆရာဖြင့် ရှာဖွေပါ..."
                 className="w-full pl-16 pr-6 py-5 rounded-[40px] border-none shadow-xl focus:ring-4 outline-none text-base font-bold bg-white"
@@ -281,7 +265,7 @@ const App: React.FC = () => {
             {!searchTerm && (
               <div className="flex justify-center gap-2 mb-12 overflow-x-auto no-scrollbar py-2">
                 {(["home", "browse", "requests"] as Tab[]).map((tab) => (
-                  <button 
+                  <button
                     key={tab}
                     onClick={() => { setActiveTab(tab); setSelectedDDC("All"); }}
                     className={`px-12 py-3.5 rounded-full text-[11px] font-black transition-all uppercase tracking-widest whitespace-nowrap ${activeTab === tab ? "text-white shadow-xl shadow-orange-200" : "bg-white text-slate-400"}`}
@@ -295,7 +279,7 @@ const App: React.FC = () => {
 
             {(activeTab === "home" || activeTab === "browse" || activeTab === "list" || searchTerm !== "") && (
               <div className="space-y-16 animate-in slide-in-from-bottom-4">
-                
+
                 {/* Most Read Section - Only on Home tab and when not searching */}
                 {activeTab === "home" && !searchTerm && mostReadBooks.length > 0 && (
                   <div className="mb-4">
@@ -304,12 +288,12 @@ const App: React.FC = () => {
                       <TrendingUp size={24} className="text-slate-700" />
                       <h2 className="text-xl font-black text-slate-800 tracking-tight">အဖတ်အများဆုံးစာအုပ်များ</h2>
                     </div>
-                    
+
                     <div className="flex overflow-x-auto gap-6 pb-8 px-2 -mx-2 no-scrollbar snap-x snap-mandatory">
                       {mostReadBooks.map(book => (
                         <div key={book.id} className="snap-start shrink-0">
-                          <BookCard 
-                            book={book} 
+                          <BookCard
+                            book={book}
                             isAdmin={isAdmin}
                             onClick={setViewingBook}
                             onDelete={handleDeleteBook}
@@ -323,10 +307,10 @@ const App: React.FC = () => {
                 {activeTab === "browse" && !searchTerm && (
                   <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
                     {DDC_CATEGORIES.map(cat => (
-                      <button 
-                        key={cat.code} 
-                        onClick={() => { setSelectedDDC(cat.code); setActiveTab("list"); }} 
-                        className="bg-white p-8 rounded-[40px] shadow-sm hover:shadow-2xl transition-all border-b-8 flex flex-col items-center gap-3 active:scale-95" 
+                      <button
+                        key={cat.code}
+                        onClick={() => { setSelectedDDC(cat.code); setActiveTab("list"); }}
+                        className="bg-white p-8 rounded-[40px] shadow-sm hover:shadow-2xl transition-all border-b-8 flex flex-col items-center gap-3 active:scale-95"
                         style={{ borderBottomColor: cat.color }}
                       >
                         {iconMap[cat.iconName]}
@@ -346,11 +330,11 @@ const App: React.FC = () => {
                       <div className="text-xs font-black text-slate-400 uppercase tracking-widest">
                         {activeTab === "home" && !searchTerm ? "All Books" : ""} {filteredBooks.length} {filteredBooks.length <= 1 ? "Book" : "Books"} Found
                       </div>
-                      
+
                       <div className="flex items-center gap-3">
                         <div className="relative">
-                          <select 
-                            value={sortBy} 
+                          <select
+                            value={sortBy}
                             onChange={(e) => setSortBy(e.target.value as "title" | "author" | "ddc")}
                             className="bg-white text-xs font-bold text-slate-600 py-2.5 pl-4 pr-8 rounded-xl border border-slate-100 shadow-sm outline-none focus:ring-2 focus:ring-orange-500/20 appearance-none cursor-pointer"
                           >
@@ -358,15 +342,15 @@ const App: React.FC = () => {
                             <option value="author">Author</option>
                             <option value="ddc">DDC</option>
                           </select>
-                           {/* Custom Arrow */}
+                          {/* Custom Arrow */}
                           <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
                             <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                              <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
                           </div>
                         </div>
-                        
-                        <button 
+
+                        <button
                           onClick={() => setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc')}
                           className="bg-white p-2.5 rounded-xl border border-slate-100 shadow-sm text-slate-500 hover:text-orange-500 transition-colors active:scale-95"
                           title={sortOrder === 'asc' ? "Sort Ascending" : "Sort Descending"}
@@ -379,9 +363,9 @@ const App: React.FC = () => {
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-y-16 gap-x-4 pb-20">
                       {filteredBooks.length > 0 ? (
                         filteredBooks.map(book => (
-                          <BookCard 
-                            key={book.id} 
-                            book={book} 
+                          <BookCard
+                            key={book.id}
+                            book={book}
                             isAdmin={isAdmin}
                             onClick={setViewingBook}
                             onDelete={handleDeleteBook}
@@ -403,9 +387,9 @@ const App: React.FC = () => {
                 <div className="bg-white p-10 rounded-[50px] shadow-sm border border-slate-100 text-center">
                   <MessageSquare size={40} className="mx-auto mb-6 text-orange-500 opacity-20" />
                   <h3 className="text-xl font-black text-slate-800 mb-4">စာအုပ်အသစ် တောင်းဆိုခြင်း</h3>
-                  <button 
-                    onClick={() => setIsRequestModalOpen(true)} 
-                    className="w-full py-5 rounded-3xl font-black text-white shadow-xl hover:scale-[1.02] transition-transform active:scale-95" 
+                  <button
+                    onClick={() => setIsRequestModalOpen(true)}
+                    className="w-full py-5 rounded-3xl font-black text-white shadow-xl hover:scale-[1.02] transition-transform active:scale-95"
                     style={{ backgroundColor: COLORS.primary }}
                   >
                     စာအုပ်အမည် ပေးပို့မည်
@@ -428,9 +412,9 @@ const App: React.FC = () => {
 
       {/* Floating Add Button - Only show on home/list view for Admins, hidden in dashboard since dashboard has its own button */}
       {isAdmin && !viewingBook && activeTab !== 'admin_dashboard' && (
-        <button 
+        <button
           onClick={() => { setEditingBook(null); setIsAddBookModalOpen(true); }}
-          className="fixed bottom-10 right-8 w-16 h-16 rounded-[28px] text-white shadow-2xl flex items-center justify-center hover:scale-110 active:scale-90 transition-all z-50 shadow-[#DB8C29]/30" 
+          className="fixed bottom-10 right-8 w-16 h-16 rounded-[28px] text-white shadow-2xl flex items-center justify-center hover:scale-110 active:scale-90 transition-all z-50 shadow-[#DB8C29]/30"
           style={{ backgroundColor: COLORS.primary }}
         >
           <Plus size={32} />
@@ -438,24 +422,24 @@ const App: React.FC = () => {
       )}
 
       {/* Modals */}
-      <LoginModal 
-        isOpen={showLoginModal} 
-        onClose={() => setShowLoginModal(false)} 
-        onLogin={handleLogin} 
+      <LoginModal
+        isOpen={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+        onLogin={handleLogin}
       />
 
-      <AddBookModal 
-        isOpen={isAddBookModalOpen} 
+      <AddBookModal
+        isOpen={isAddBookModalOpen}
         onClose={() => { setIsAddBookModalOpen(false); setEditingBook(null); }}
-        onAdd={handleAddBook} 
+        onAdd={handleAddBook}
         onUpdate={handleUpdateBook}
         bookToEdit={editingBook}
       />
 
-      <RequestBookModal 
-        isOpen={isRequestModalOpen} 
-        onClose={() => setIsRequestModalOpen(false)} 
-        onRequest={handleAddRequest} 
+      <RequestBookModal
+        isOpen={isRequestModalOpen}
+        onClose={() => setIsRequestModalOpen(false)}
+        onRequest={handleAddRequest}
       />
 
       {/* Toast Notification */}

@@ -1,0 +1,112 @@
+[
+    { 
+      "id": 1, 
+      "title": "API Book", 
+      "author": "Ei Maung", 
+      "ddc": "000", 
+      "isFeatured": true, 
+      "status": "ရရှိနိုင်သည်", 
+      "year": "၂၀၂၃", 
+      "coverUrl": "/covers/default_cover.jpg", 
+      "pdfUrl": "/books/API-book-by-Ei-Maung.pdf" 
+    },
+    { 
+      "id": 2, 
+      "title": "Bitcoin Book", 
+      "author": "Ei Maung", 
+      "ddc": "300", 
+      "isFeatured": false, 
+      "status": "ရရှိနိုင်သည်", 
+      "year": "၂၀၂၃", 
+      "coverUrl": "/covers/default_cover.jpg", 
+      "pdfUrl": "/books/Bitcoin-book-by-Ei-Maung.pdf" 
+    },
+    { 
+      "id": 3, 
+      "title": "Bootstrap 5 Book", 
+      "author": "Ei Maung", 
+      "ddc": "600", 
+      "isFeatured": true, 
+      "status": "ရရှိနိုင်သည်", 
+      "year": "၂၀၂၃", 
+      "coverUrl": "/covers/default_cover.jpg", 
+      "pdfUrl": "/books/Bootstrap5-book-by-Ei-Maung.pdf" 
+    },
+    { 
+      "id": 4, 
+      "title": "JavaScript Book", 
+      "author": "Ei Maung", 
+      "ddc": "600", 
+      "isFeatured": true, 
+      "status": "ရရှိနိုင်သည်", 
+      "year": "၂၀၂၃", 
+      "coverUrl": "/covers/default_cover.jpg", 
+      "pdfUrl": "/books/JavaScript-Book-by-Ei-Maung.pdf" 
+    },
+    { 
+      "id": 5, 
+      "title": "Laravel 8 Book", 
+      "author": "Ei Maung", 
+      "ddc": "600", 
+      "isFeatured": false, 
+      "status": "ရရှိနိုင်သည်", 
+      "year": "၂၀၂၃", 
+      "coverUrl": "/covers/default_cover.jpg", 
+      "pdfUrl": "/books/Laravel8-book-by-Ei-Maung.pdf" 
+    },
+    { 
+      "id": 6, 
+      "title": "Professional Web Developer", 
+      "author": "Ei Maung", 
+      "ddc": "600", 
+      "isFeatured": true, 
+      "status": "ရရှိနိုင်သည်", 
+      "year": "၂၀၂၃", 
+      "coverUrl": "/covers/default_cover.jpg", 
+      "pdfUrl": "/books/Professional-Web-Developer-2023.pdf" 
+    },
+    { 
+      "id": 7, 
+      "title": "React Book", 
+      "author": "Ei Maung", 
+      "ddc": "600", 
+      "isFeatured": true, 
+      "status": "ရရှိနိုင်သည်", 
+      "year": "၂၀၂၃", 
+      "coverUrl": "/covers/default_cover.jpg", 
+      "pdfUrl": "/books/React-book-by-Ei-Maung.pdf" 
+    },
+    { 
+      "id": 8, 
+      "title": "Lyra and Silent Frequency", 
+      "author": "Unknown", 
+      "ddc": "800", 
+      "isFeatured": false, 
+      "status": "ရရှိနိုင်သည်", 
+      "year": "2023", 
+      "coverUrl": "/covers/default_cover.jpg", 
+      "pdfUrl": "/books/Lyra-and-Silent-Frequency.pdf" 
+    },
+    { 
+      "id": 9, 
+      "title": "Test Book 9", 
+      "author": "Admin", 
+      "ddc": "100", 
+      "isFeatured": false, 
+      "status": "ရရှိနိုင်သည်", 
+      "year": "2026", 
+      "coverUrl": "/covers/default_cover.jpg", 
+      "pdfUrl": "/books/test-book-9.pdf" 
+    },
+    { 
+      "id": 10, 
+      "title": "Test Book 10", 
+      "author": "Admin", 
+      "ddc": "500", 
+      "isFeatured": false, 
+      "status": "ရရှိနိုင်သည်", 
+      "year": "2026", 
+      "coverUrl": "/covers/default_cover.jpg", 
+      "pdfUrl": "/books/test-book-10.pdf" 
+    }
+  ]

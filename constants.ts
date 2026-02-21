@@ -2,7 +2,7 @@ import { Book, DDCCategory } from "./types";
 
 export const STORAGE_KEY = "our_trees_library_final_v1";
 export const REQUEST_STORAGE_KEY = "our_trees_library_requests_final";
-export const DATA_VERSION = "1.0.1"; // Increment this when deploying new books to force client-side sync
+export const DATA_VERSION = "1.0.2"; // Increment this when deploying new books to force client-side sync
 export const VERSION_KEY = "our_trees_db_version";
 
 // For Offline usage, place these images in public/logo/ folder

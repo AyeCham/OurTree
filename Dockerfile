@@ -12,14 +12,20 @@ COPY . .
 # Run the Vite build command
 RUN npm run build
 
-# STAGE 2: Serve
-FROM nginx:alpine
+# STAGE 2: Use OpenResty (Nginx + Lua)
+FROM openresty/openresty:alpine
 
-# Copy the build output from Vite (usually 'dist')
-COPY --from=build-stage /app/dist /usr/share/nginx/html
+# Install wget so the sync script can download files
+RUN apk add --no-cache wget bash
 
-# Copy your specific nginx.conf from the screenshot
+# Copy the build output from Stage 1
+COPY --from=build-stage /app/dist /usr/local/openresty/nginx/html
+
+# Copy your specific nginx.conf to OpenResty's config path
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
+# Copy the sync script and make it executable
+COPY sync_library.sh /usr/local/bin/sync-books
+RUN chmod +x /usr/local/bin/sync-books
+
 EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
