@@ -125,21 +125,25 @@ nano docker-compose.yml
 ```
 
 ```yaml
-cat <<EOF > docker-compose.yml
 services:
   library:
-    image: dockerusername/ourtree-library:latest
+    image: ayechan279/ourtree-library:latest
+    container_name: library-app
     ports:
       - "8080:80"
+    volumes:
+      - /home/ourtree/ourtree-library/books:/usr/local/openresty/nginx/html/books
     restart: always
 
   updater:
     image: containrrr/watchtower
+    container_name: watchtower
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - DOCKER_API_VERSION=1.44
     command: --interval 3600 --cleanup
     restart: always
-EOF
 ```
 
 Start services:
