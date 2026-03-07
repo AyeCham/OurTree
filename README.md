@@ -153,7 +153,11 @@ docker compose up -d
 ```
 
 ---
-
+Tailscale Install
+```bash
+curl -fsSL https://tailscale.com/install.sh | sh
+```
+---
 # Gateway Redirect (Lighttpd)
 
 Edit configuration:
